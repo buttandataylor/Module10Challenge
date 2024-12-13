@@ -50,7 +50,20 @@ class Database {
             [firstName, lastName, roleId, managerId]
         );
     }
+
+    // Fetch the total utilized budget for a department
+    async viewTotalUtilizedBudget(departmentId) {
+        const result = await db.query(
+            `SELECT SUM(r.salary) AS total_budget 
+             FROM employee e
+             JOIN role r ON e.role_id = r.id
+             WHERE r.department_id = $1`,
+            [departmentId]
+        );
+        return result.rows[0].total_budget;
+    }
 }
 
 module.exports = new Database();
+
 

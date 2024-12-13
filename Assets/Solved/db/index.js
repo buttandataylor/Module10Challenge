@@ -16,6 +16,7 @@ async function mainMenu() {
             'Add Department',
             'Add Role',
             'Add Employee',
+            'View Total Utilized Budget of a Department',
             'Exit',
         ],
     });
@@ -39,12 +40,33 @@ async function mainMenu() {
         case 'Add Employee':
             await addEmployee();
             break;
+        case 'View Total Utilized Budget of a Department':
+            await viewTotalBudget();
+            break;
         case 'Exit':
             console.log('Goodbye!');
             process.exit(0);
     }
 
     mainMenu();
+}
+
+// View Total Utilized Budget of a Department
+async function viewTotalBudget() {
+    const departments = await db.getDepartments();
+
+    const { departmentId } = await inquirer.prompt({
+        type: 'list',
+        name: 'departmentId',
+        message: 'Select a department to view its total utilized budget:',
+        choices: departments.map(dep => ({
+            name: dep.name,
+            value: dep.id,
+        })),
+    });
+
+    const totalBudget = await db.viewTotalUtilizedBudget(departmentId);
+    console.log(`Total utilized budget for the selected department is: $${totalBudget}`);
 }
 
 // Add Department
@@ -110,3 +132,4 @@ async function addEmployee() {
 
 // Start the Application
 mainMenu();
+

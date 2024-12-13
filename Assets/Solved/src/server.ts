@@ -1,38 +1,25 @@
-import express from 'express';
-import { QueryResult } from 'pg';
-import { pool, connectToDb } from './connection.js';
+import express, { Application, Request, Response } from 'express';
+import path from 'path';
 
-await connectToDb();
+const app: Application = express();
+const PORT = process.env.PORT || 3000;
 
-const PORT = process.env.PORT || 3001;
-const app = express();
+// Middleware to serve static files in production
+if (process.env.NODE_ENV === 'production') {
+    const distPath = path.join(__dirname, 'dist');
+    app.use(express.static(distPath));
 
-// Express middleware
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+    // Serve index.html for all routes in production
+    app.get('*', (req: Request, res: Response) => {
+        res.sendFile(path.resolve(distPath, 'index.html'));
+    });
+} else {
+    app.get('/', (req: Request, res: Response) => {
+        res.send('Development server is running!');
+    });
+}
 
-// TODO: Write a comment to explain what the following code is doing.
-pool.query('SELECT COUNT(id) AS total_count FROM favorite_books GROUP BY in_stock', (err: Error, result: QueryResult) => {
-  if (err) {
-    console.log(err);
-  } else if (result) {
-    console.log(result.rows);
-  }
-});
-
-// TODO: Write a comment to explain what the following code is doing.
-pool.query('SELECT SUM(quantity) AS total_in_section, MAX(quantity) AS max_quantity, MIN(quantity) AS min_quantity, AVG(quantity) AS avg_quantity FROM favorite_books GROUP BY section', (err: Error, result: QueryResult) => {
-  if (err) {
-    console.log(err);
-  } else if (result) {
-    console.log(result.rows);
-  }
-});
-
-app.use((_req, res) => {
-  res.status(404).end();
-});
-
+// Start the server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server is running on port ${PORT}`);
 });

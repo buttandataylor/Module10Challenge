@@ -3,10 +3,10 @@ const inquirer = require('inquirer');
 
 // Configure the PostgreSQL connection
 const pool = new Pool({
-    user: 'taylormaadison',       // Replace with your PostgreSQL username
-    host: 'localhost',            // Replace with your database
-    password: 'Bootcamp20241212', // Replace with your PostgreSQL password
-    port: 5432,                   // Default PostgreSQL port
+    user: 'taylormaadison',       
+    host: 'localhost',            
+    password: 'Bootcamp20241212', 
+    port: 5432,                   
 });
 
 // Export a query function for executing SQL
